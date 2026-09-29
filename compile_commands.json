@@ -1,0 +1,70 @@
+[
+  {
+    "file": "src/exit.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-ffreestanding",
+      "-Wall",
+      "-Wextra",
+      "-I",
+      "src/include",
+      "-c",
+      "src/exit.c",
+      "-o",
+      "build/exit.o"
+    ],
+    "directory": "/home/johnmalin/Dev/NolibC",
+    "output": "build/exit.o"
+  },
+  {
+    "file": "src/mem.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-ffreestanding",
+      "-Wall",
+      "-Wextra",
+      "-I",
+      "src/include",
+      "-c",
+      "src/mem.c",
+      "-o",
+      "build/mem.o"
+    ],
+    "directory": "/home/johnmalin/Dev/NolibC",
+    "output": "build/mem.o"
+  },
+  {
+    "file": "src/str.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-ffreestanding",
+      "-Wall",
+      "-Wextra",
+      "-I",
+      "src/include",
+      "-c",
+      "src/str.c",
+      "-o",
+      "build/str.o"
+    ],
+    "directory": "/home/johnmalin/Dev/NolibC",
+    "output": "build/str.o"
+  },
+  {
+    "file": "src/type_conv.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-ffreestanding",
+      "-Wall",
+      "-Wextra",
+      "-I",
+      "src/include",
+      "-c",
+      "src/type_conv.c",
+      "-o",
+      "build/type_conv.o"
+    ],
+    "directory": "/home/johnmalin/Dev/NolibC",
+    "output": "build/type_conv.o"
+  }
+]
