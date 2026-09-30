@@ -16,9 +16,6 @@ typedef double f64;
 typedef unsigned long usize;
     // Strings //
 typedef char c;
-typedef struct s s;
-s *str_create(const char *str); // Cannot create, no malloc, memcpy
-void str_destroy(s *str);       // Cannot create, no free
 
     // Type conversion functions //
 
@@ -39,7 +36,6 @@ i64 f64_i64(f64 input);
 
 
     // String functions //
-i32 strlen(const s *str);
 usize char_p_len(const c *ch);
 
 
@@ -55,7 +51,6 @@ void exit_i32(i32 status);
 void exit_i64(i64 status);
 void exit_f32(f32 status);
 void exit_f64(f64 status);
-
 #define exit(status) _Generic((status), \
     i32: exit_i32,                      \
     i64: exit_i64,                    \
@@ -67,18 +62,24 @@ void exit_f64(f64 status);
 
 // Memory //
 
+typedef struct {
+    void *address;
+    usize bytes;
+} Block;
+
+typedef struct {
+    Block *array;
+    usize size;
+    usize cap;
+} MemHeap;
+
+MemHeap *create_MemHeap(usize capacity);
+
+
     // I don't have a slightes idea how to implement those mf/
 
-void *malloc_i32(i32 size);
-void *malloc_i64(i64 size);
-void *malloc_usize(usize size);
-
-#define malloc(size) _Generic((size), \
-    i32: malloc_i32,                  \
-    i64: malloc_i64,                  \
-    usize: malloc_usize              \
-)(size)
-void *free();
+void *malloc(usize size);
+void *free(void *ptr);
 void *memcpy();
 
 #endif // !NOLIBC_H

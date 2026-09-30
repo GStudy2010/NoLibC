@@ -1,3 +1,4 @@
+
 #include "nolibc.h"
 
 #define SYS_MMAP 9
@@ -8,22 +9,28 @@
 #define MAP_PRIVATE 2
 #define MAP_ANON    32
 
-#define HEAP_SIZE (1024 * 1024) // 1Mib
+#define MAX_BLOCKS 1024
 
-static unsigned char *heap = 0;
-static usize heap_used = 0;
+static Block blocks[MAX_BLOCKS];
 
-static void *request_mem_i32(i32 size)
+static MemHeap heap = {
+    .array = blocks,
+    .size = 0,
+    .cap = MAX_BLOCKS
+};
+
+static void *request_memory(usize size)
 {
-    register long r10 __asm__("r10") = MAP_PRIVATE | MAP_ANON;
-    register long r8  __asm__("r8")  = -1;
-    register long r9  __asm__("r9")  = 0;
+    register long r10 __asm__("r10") =
+        MAP_PRIVATE | MAP_ANON;
+    register long r8 __asm__("r8") = -1;
+    register long r9 __asm__("r9") = 0;
 
-    long res = SYS_MMAP;
+    long result = SYS_MMAP;
 
     __asm__ volatile (
         "syscall"
-        : "+a"(res)
+        : "+a"(result)
         : "D"(0L),
           "S"((long)size),
           "d"((long)(PROT_READ | PROT_WRITE)),
@@ -33,68 +40,33 @@ static void *request_mem_i32(i32 size)
         : "rcx", "r11", "memory"
     );
 
-    if (res < 0 && res >= -4095)
+    if (result < 0 && result >= -4095)
         return 0;
 
-    return (void *)res;
+    return (void *)result;
 }
 
-void *malloc_usize(usize size) {
+void *malloc(usize size)
+{
     if (size == 0)
         return 0;
+
     if (size > (usize)-1 - 15)
         return 0;
 
     size = (size + 15) & ~(usize)15;
 
-    if (!heap) {
-        heap = request_mem_i32(HEAP_SIZE); // Initialize heap if not yet initialized
-
-        if (!heap)
-            return 0;
-    }
-    if (size > HEAP_SIZE - heap_used)
+    if (heap.size >= heap.cap)
         return 0;
 
-    void *result = heap + heap_used;
-    heap_used += size;
+    void *address = request_memory(size);
 
-    return result;
-}
-
-void *malloc_i32(i32 size) {
-    if (size <= 0)
-        return 0;
-    size = (size + 15) & ~(usize)15;
-    if (!heap) {
-        heap = request_mem_i32(HEAP_SIZE); // Initialize heap if not yet initialized
-
-        if (!heap)
-            return 0;
-    }
-    if (size > usize_i32(HEAP_SIZE - heap_used))
+    if (!address)
         return 0;
 
-    void *result = heap + heap_used;
-    heap_used += size;
+    heap.array[heap.size].address = address;
+    heap.array[heap.size].bytes = size;
+    heap.size++;
 
-    return result;
-}
-void *malloc_i64(i64 size) {
-    if (size <= 0)
-        return 0;
-    size = (size + 15) & ~(usize)15;
-    if (!heap) {
-        heap = request_mem_i32(HEAP_SIZE); // Initialize heap if not yet initialized
-
-        if (!heap)
-            return 0;
-    }
-    if (size > usize_i64(HEAP_SIZE - heap_used))
-        return 0;
-
-    void *result = heap + heap_used;
-    heap_used += size;
-
-    return result;
+    return address;
 }
