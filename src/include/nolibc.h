@@ -78,8 +78,8 @@ MemHeap *create_MemHeap(usize capacity);
 
     // I don't have a slightes idea how to implement those mf/
 
-void *malloc(usize size);
-void *free(void *ptr);
+void *malloc(usize size); // Implemented
+void free(void *ptr);
 void *memcpy();
 
 #endif // !NOLIBC_H

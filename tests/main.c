@@ -11,6 +11,6 @@ void _start(void) {
     for (usize i = 0;i<bytes_to_allocate;i++) {
         text[i] = s[i];
     }
-
+    free(text);
     exit(PROGRAM_SUCCES);
 }

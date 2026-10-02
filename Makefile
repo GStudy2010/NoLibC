@@ -1,7 +1,7 @@
 CC = gcc
 AR = ar
 
-CFLAGS = -ffreestanding -Wall -Wextra -I src/include
+CFLAGS = -ffreestanding -Wall -Wextra -fno-stack-protector -I src/include
 
 BUILD_DIR = build
 LIB = $(BUILD_DIR)/libnolibc.a
